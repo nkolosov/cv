@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Никита Колосов — ведущий Go-разработчик</title>
+<meta name="description" content="Ведущий Go-разработчик из Новосибирска. 13 лет в бэкенде: highload, Apache Kafka, микросервисы в Kubernetes, observability.">
+<meta property="og:title" content="Никита Колосов — ведущий Go-разработчик">
+<meta property="og:description" content="13 лет в бэкенде: highload, Apache Kafka, микросервисы в Kubernetes, observability.">
+<meta property="og:type" content="profile">
+<meta name="theme-color" content="#EEF2F4">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2315202B'/%3E%3Crect x='5' y='8' width='9' height='3' rx='1.5' fill='%23777BB3'/%3E%3Crect x='10' y='14.5' width='12' height='3' rx='1.5' fill='%23777BB3'/%3E%3Crect x='17' y='21' width='10' height='3' rx='1.5' fill='%2300ADD8'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #EEF2F4;
+    --ink: #15202B;
+    --muted: #55636F;
+    --rule: #CDD6DC;
+    --go: #00ADD8;
+    --php: #777BB3;
+    --link: #006F8A;
+
+    --display: "Unbounded", "Golos Text", system-ui, sans-serif;
+    --text: "Golos Text", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+    --label-w: 13.5rem;
+    --dur-w: 6.5rem;
+    --page: 70rem;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--text);
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    font-feature-settings: "tnum" 1;
+  }
+
+  a { color: var(--link); text-decoration-thickness: 1px; text-underline-offset: 0.18em; }
+  a:hover { color: var(--ink); }
+
+  :focus-visible { outline: 2px solid var(--go); outline-offset: 3px; border-radius: 2px; }
+
+  .page { max-width: var(--page); margin: 0 auto; padding: 0 1.5rem; }
+
+  /* ——— Hero ——— */
+  .hero { padding: 5.5rem 0 4.5rem; }
+
+  .hero h1 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(2.75rem, 9.2vw, 7.25rem);
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+    margin: 0 0 1.75rem;
+  }
+  .hero h1 span { display: block; }
+
+  .role {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(1.15rem, 2.4vw, 1.5rem);
+    letter-spacing: -0.01em;
+    margin: 0 0 1.25rem;
+  }
+
+  .lede { max-width: 38rem; font-size: 1.1875rem; margin: 0 0 1rem; }
+  .where { color: var(--muted); margin: 0 0 2.25rem; }
+
+  .contacts { display: flex; flex-wrap: wrap; gap: 0.75rem 1.75rem; align-items: center; padding: 0; margin: 0; list-style: none; }
+
+  .btn {
+    display: inline-block;
+    background: var(--ink);
+    color: var(--paper);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.7rem 1.25rem;
+    border-radius: 999px;
+  }
+  .btn:hover { background: var(--link); color: #fff; }
+
+  /* ——— Sections ——— */
+  section { padding: 3.5rem 0; }
+
+  h2 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(1.6rem, 3.4vw, 2.25rem);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin: 0 0 0.75rem;
+  }
+
+  .intro { color: var(--muted); max-width: 40rem; margin: 0 0 2rem; }
+
+  /* ——— Trace ——— */
+  .legend { display: flex; gap: 1.25rem; padding: 0; margin: 0 0 1.25rem; list-style: none; font-size: 0.9375rem; color: var(--muted); }
+  .legend li { display: flex; align-items: center; gap: 0.5rem; }
+  .legend i { display: inline-block; width: 1.5rem; height: 0.5rem; border-radius: 99px; }
+  .legend .php { background: var(--php); }
+  .legend .go { background: var(--go); }
+
+  .trace { --total: 160; }
+
+  .row, .axis {
+    display: grid;
+    grid-template-columns: var(--label-w) 1fr var(--dur-w);
+    column-gap: 1.25rem;
+    align-items: center;
+  }
+
+  .axis { font-size: 0.8125rem; color: var(--muted); padding-bottom: 0.5rem; border-bottom: 1px solid var(--rule); }
+  .axis .ticks { position: relative; height: 1.2em; }
+  .axis .ticks span { position: absolute; left: calc(var(--at) / var(--total) * 100%); transform: translateX(-50%); }
+
+  .track { position: relative; height: 2.75rem; }
+  /* vertical year gridlines behind the bars */
+  .track::before {
+    content: "";
+    position: absolute; top: 0; bottom: 0; right: 0;
+    left: calc(5 / var(--total) * 100%);
+    background-image: repeating-linear-gradient(to right, var(--rule) 0 1px, transparent 1px calc(24 / (var(--total) - 5) * 100%));
+    opacity: 0.6;
+  }
+
+  .bar {
+    position: absolute;
+    top: 50%;
+    left: calc(var(--s) / var(--total) * 100%);
+    width: max(0.75rem, calc((var(--e) - var(--s)) / var(--total) * 100%));
+    height: 0.875rem;
+    margin-top: -0.4375rem;
+    border-radius: 99px;
+    background: var(--c, var(--php));
+    transform-origin: left center;
+  }
+  .bar.root { background: var(--ink); height: 0.5rem; margin-top: -0.25rem; }
+  .bar.mixed { background: linear-gradient(to right, var(--php) 0 55%, var(--go) 100%); }
+  .bar.go { --c: var(--go); }
+  .bar.now::after {
+    content: "";
+    position: absolute; right: -0.25rem; top: 50%;
+    width: 0.5rem; height: 0.5rem; margin-top: -0.25rem;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 2px solid var(--go);
+  }
+
+  .dur { text-align: right; color: var(--muted); font-size: 0.9375rem; white-space: nowrap; }
+
+  .label { min-width: 0; }
+  .label b { display: block; font-weight: 600; line-height: 1.25; }
+  .label small { display: block; color: var(--muted); font-size: 0.875rem; line-height: 1.3; }
+
+  .root-row { border-bottom: 1px solid var(--rule); }
+  .root-row .label b { font-weight: 500; }
+
+  details { border-bottom: 1px solid var(--rule); }
+  details > summary { list-style: none; cursor: pointer; padding: 0.5rem 0; }
+  details > summary::-webkit-details-marker { display: none; }
+  details > summary:hover .label b { color: var(--link); }
+
+  .label b::before {
+    content: "";
+    display: inline-block;
+    width: 0.45em; height: 0.45em;
+    border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+    transform: rotate(-45deg);
+    margin: 0 0.55em 0.12em 0;
+    transition: transform 0.18s ease;
+  }
+  details[open] .label b::before { transform: rotate(45deg); }
+  .root-row .label b::before { display: none; }
+  .root-row { padding: 0.5rem 0; }
+
+  .span-body {
+    padding: 0.25rem 0 1.75rem calc(var(--label-w) + 1.25rem);
+    max-width: calc(var(--label-w) + 1.25rem + 44rem);
+  }
+  .span-body p { margin: 0 0 0.75rem; }
+  .span-body ul { margin: 0 0 1rem; padding-left: 1.1rem; }
+  .span-body li { margin-bottom: 0.4rem; }
+  .span-body li::marker { color: var(--muted); }
+  .stack { color: var(--muted); font-size: 0.9375rem; margin: 0; }
+  .stack strong { color: var(--ink); font-weight: 500; }
+
+  /* the one orchestrated moment: spans render left-to-right like a trace loading */
+  @media (prefers-reduced-motion: no-preference) {
+    .js .bar { animation: grow 0.7s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--s) * 7ms + 150ms); }
+    @keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  }
+
+  /* ——— Skills ——— */
+  .skills { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1.75rem 2.5rem; margin: 0; }
+  .skills div { min-width: 0; }
+  .skills dt { font-weight: 600; margin-bottom: 0.3rem; }
+  .skills dd { margin: 0; color: var(--muted); }
+
+  /* ——— Two-column misc ——— */
+  .split { display: grid; grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr)); gap: 2.5rem 3.5rem; }
+  .split p { margin: 0 0 0.85rem; max-width: 36rem; }
+  .plain { list-style: none; padding: 0; margin: 0; }
+  .plain li { margin-bottom: 0.5rem; }
+
+  /* ——— Footer ——— */
+  footer { padding: 4rem 0 3rem; }
+  footer h2 { margin-bottom: 1.25rem; }
+  footer .updated { color: var(--muted); font-size: 0.875rem; margin-top: 3rem; }
+
+  /* ——— Small screens: label above the bar ——— */
+  @media (max-width: 44rem) {
+    .hero { padding: 3.5rem 0 3rem; }
+    .row, .axis { grid-template-columns: 1fr auto; row-gap: 0.25rem; }
+    .row .label { grid-column: 1; }
+    .row .dur { grid-column: 2; grid-row: 1; align-self: start; }
+    .row .track { grid-column: 1 / -1; height: 1.5rem; }
+    .axis { grid-template-columns: 1fr; }
+    .axis > :not(.ticks) { display: none; }
+    .span-body { padding-left: 0; }
+    .axis .ticks span:nth-child(even) { display: none; }
+  }
+
+  @media print {
+    body { background: #fff; }
+    .btn { background: none; color: var(--ink); padding: 0; }
+    details > summary { pointer-events: none; }
+    .span-body { display: block !important; }
+  }
+</style>
+</head>
+<body>
+<script>document.documentElement.classList.add("js");</script>
+
+<main class="page">
+
+  <header class="hero">
+    <h1><span>Никита</span><span>Колосов</span></h1>
+    <p class="role">Ведущий Go-разработчик</p>
+    <p class="lede">Тринадцать лет пишу бэкенд: от JSON API для мобильных приложений до сервисов, которые держат больше 10&nbsp;000&nbsp;RPS на внешнем API и пропускают миллион событий в секунду через Kafka. Проектирую микросервисы, согласовываю контракты с соседними командами и строю observability так, чтобы о проблеме узнавать раньше пользователей.</p>
+    <p class="where">Новосибирск, Академгородок. Работаю удалённо.</p>
+    <ul class="contacts">
+      <li><a class="btn" href="https://t.me/nkolosov">Написать в Telegram</a></li>
+      <li><a href="mailto:anexroid@gmail.com">anexroid@gmail.com</a></li>
+      <li><a href="https://github.com/nkolosov">GitHub</a></li>
+      <li><a href="https://career.habr.com/nkolosov_nsk">Хабр Карьера</a></li>
+    </ul>
+  </header>
+
+  <section aria-labelledby="exp">
+    <h2 id="exp">Опыт</h2>
+    <p class="intro">Карьера в виде трейса: каждая строка — компания, полоса — сколько я там проработал. Нажмите на строку, чтобы увидеть, чем я занимался.</p>
+
+    <ul class="legend" aria-label="Основной язык">
+      <li><i class="php"></i>PHP</li>
+      <li><i class="go"></i>Go</li>
+    </ul>
+
+    <div class="trace" id="trace">
+      <div class="axis" aria-hidden="true">
+        <span></span>
+        <div class="ticks">
+          <span style="--at:5">2014</span>
+          <span style="--at:29">2016</span>
+          <span style="--at:53">2018</span>
+          <span style="--at:77">2020</span>
+          <span style="--at:101">2022</span>
+          <span style="--at:125">2024</span>
+          <span style="--at:149">2026</span>
+        </div>
+        <span></span>
+      </div>
+
+      <div class="row root-row">
+        <div class="label"><b>Бэкенд-разработка</b><small>с августа 2013</small></div>
+        <div class="track"><div class="bar root" style="--s:0;--e:160" data-now></div></div>
+        <div class="dur" data-from="2013-08">13 лет 4 мес.</div>
+      </div>
+
+      <details>
+        <summary class="row">
+          <div class="label"><b>Вуду Рокс</b><small>PHP-разработчик</small></div>
+          <div class="track"><div class="bar" style="--s:0;--e:16"></div></div>
+          <div class="dur">1 год 5 мес.</div>
+        </summary>
+        <div class="span-body">
+          <p>Август 2013 — декабрь 2014</p>
+          <ul>
+            <li>Серверная часть JSON API для приложений на Android и iOS.</li>
+            <li>Сайты на фреймворке Yii.</li>
+          </ul>
+          <p class="stack"><strong>Стек:</strong> PHP, MySQL, Yii</p>
+        </div>
+      </details>
+
+      <details>
+        <summary class="row">
+          <div class="label"><b>Playtox</b><small>PHP-разработчик</small></div>
+          <div class="track"><div class="bar" style="--s:16;--e:34"></div></div>
+          <div class="dur">1 год 7 мес.</div>
+        </summary>
+        <div class="span-body">
+          <p>Декабрь 2014 — июнь 2016</p>
+          <ul>
+            <li>Мобильные браузерные игры «Стальной легион» и «Доценты».</li>
+            <li>Проектировал и делал игровые механики вместе с геймдизайнерами.</li>
+            <li>Работал с поддержкой и игроками: консультировал по механикам и багам.</li>
+            <li>Интеграция с платформой VMMO: single sign-on, платёжные инструменты, кросс-маркетинг.</li>
+          </ul>
+          <p class="stack"><strong>Стек:</strong> PHP, PostgreSQL, MongoDB, Yii</p>
+        </div>
+      </details>
+
+      <details>
+        <summary class="row">
+          <div class="label"><b>Pushwoosh</b><small>Backend-разработчик</small></div>
+          <div class="track"><div class="bar mixed" style="--s:34;--e:108"></div></div>
+          <div class="dur">6 лет 3 мес.</div>
+        </summary>
+        <div class="span-body">
+          <p>Июнь 2016 — август 2022. Здесь перешёл с PHP на Go.</p>
+          <ul>
+            <li>Проектировал и разрабатывал высоконагруженное API и сервисы отправки сообщений на PHP и Go, в том числе микросервисы в Kubernetes.</li>
+            <li>Внедрял service discovery на Consul, метрики в Prometheus, очереди на RabbitMQ и Kafka.</li>
+            <li>Работал с PostgreSQL, MongoDB, Cassandra и ClickHouse.</li>
+            <li>Дежурил в on-call и вместе с другими командами вырабатывал SRE-практики: единые подходы к логированию, метрикам, межсервисному взаимодействию и передаче кода в эксплуатацию.</li>
+            <li>Проектировал новые модули по запросам клиентов вместе с поддержкой и соседними командами.</li>
+          </ul>
+          <p class="stack"><strong>Стек:</strong> PHP, Go, PostgreSQL, MongoDB, ClickHouse, Redis, Kafka, Kubernetes</p>
+        </div>
+      </details>
+
+      <details>
+        <summary class="row">
+          <div class="label"><b>Magnit Tech</b><small>Старший Go-разработчик, техлид</small></div>
+          <div class="track"><div class="bar go" style="--s:108;--e:127"></div></div>
+          <div class="dur">1 год 8 мес.</div>
+        </summary>
+        <div class="span-body">
+          <p>Август 2022 — март 2024. Бэкенд мобильного приложения, в котором сотрудники «Магнита» собирают онлайн-заказы.</p>
+          <ul>
+            <li>Был техлидом проекта: собирал требования, проектировал новую функциональность вместе с product owner, согласовывал контракты по API и Kafka с другими командами.</li>
+            <li>За первый месяц с нуля построил мониторинг и алертинг для всех сервисов команды — технические и продуктовые метрики, дашборды.</li>
+            <li>Планировал состав и порядок релизов, собирал и выкатывал их.</li>
+            <li>Проводил code review и ревью дизайна задач, писал юнит- и модульные тесты, помогал QA с тест-кейсами.</li>
+            <li>Несколько раз сам выходил сборщиком в магазин, чтобы собрать обратную связь и проверить продукт вживую.</li>
+          </ul>
+          <p class="stack"><strong>Стек:</strong> Go, PostgreSQL, Kafka, Redis, gRPC, Kubernetes, Prometheus</p>
+        </div>
+      </details>
+
+      <details open>
+        <summary class="row">
+          <div class="label"><b>Купер</b><small>Ведущий Go-разработчик</small></div>
+          <div class="track"><div class="bar go now" style="--s:127;--e:160" data-now></div></div>
+          <div class="dur" data-from="2024-03">2 года 9 мес.</div>
+        </summary>
+        <div class="span-body">
+          <p>С марта 2024 по настоящее время. Сервисы бэк-офиса для B2B-клиентов.</p>
+          <ul>
+            <li>Проектирую и пишу новые микросервисы с нуля, поддерживаю существующие.</li>
+            <li>Проектирую контракты, делаю gRPC и HTTP API, интеграции с внешними системами (1С, ESP), пишу ADR.</li>
+            <li>Внедряю метрики, алерты и SLO.</li>
+            <li>Улучшил observability сервисов во всём B2B-юните: написал требования, выстроил процесс ревью текущего уровня команд и вместе с юнит-лидом ставил командам и лидам квартальные OKR.</li>
+          </ul>
+          <p class="stack"><strong>Стек:</strong> Go, PostgreSQL, Kafka, gRPC, REST, микросервисная архитектура</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <section aria-labelledby="skills">
+    <h2 id="skills">Навыки</h2>
+    <dl class="skills">
+      <div><dt>Языки</dt><dd>Go, PHP, SQL</dd></div>
+      <div><dt>Хранилища</dt><dd>PostgreSQL, MongoDB, Redis, ClickHouse, Cassandra, MySQL</dd></div>
+      <div><dt>Очереди</dt><dd>Apache Kafka, RabbitMQ</dd></div>
+      <div><dt>API</dt><dd>gRPC, REST, проектирование и согласование контрактов</dd></div>
+      <div><dt>Инфраструктура</dt><dd>Kubernetes, Docker, Consul</dd></div>
+      <div><dt>Наблюдаемость</dt><dd>Prometheus, алертинг, SLO, дашборды</dd></div>
+      <div><dt>Практики</dt><dd>Архитектура микросервисов, ADR, SRE, on-call, code review</dd></div>
+      <div><dt>Языки общения</dt><dd>Русский — родной, английский — B2</dd></div>
+    </dl>
+  </section>
+
+  <section aria-labelledby="more">
+    <div class="split">
+      <div>
+        <h2 id="more">Менторство</h2>
+        <p>Больше пяти лет помогаю разработчикам освоить ключевые для бэкенда навыки и вырасти в грейде. Найти меня как ментора можно здесь:</p>
+        <ul class="plain">
+          <li><a href="https://solvery.io/mentor/nkolosov">Solvery</a></li>
+          <li><a href="https://h.careers/curators/nikita-kolosov">Эйч Навыки</a></li>
+          <li><a href="https://getmentor.dev/mentor/nikita-kolosov-4184">GetMentor</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Ещё обо мне</h2>
+        <p>Окончил факультет информационных технологий НГУ в 2013 году.</p>
+        <p>С 2011 года пишу на Хабре как <a href="https://habr.com/ru/users/Anexroid/">@Anexroid</a> — про высокие нагрузки, PHP, безопасность и алгоритмы.</p>
+        <p>В свободное время автоматизирую дом на Home Assistant и играю в CTF.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer aria-labelledby="contact">
+    <h2 id="contact">Связаться</h2>
+    <ul class="contacts">
+      <li><a class="btn" href="https://t.me/nkolosov">Написать в Telegram</a></li>
+      <li><a href="mailto:anexroid@gmail.com">anexroid@gmail.com</a></li>
+      <li><a href="https://github.com/nkolosov">GitHub</a></li>
+      <li><a href="https://career.habr.com/nkolosov_nsk">Хабр Карьера</a></li>
+    </ul>
+    <p class="updated">Обновлено в ноябре 2026</p>
+  </footer>
+
+</main>
+
+<script>
+  // Keep the "current" spans and durations accurate as time passes.
+  (function () {
+    var START = { y: 2013, m: 8 };          // axis origin: August 2013
+    var now = new Date();
+    var nowIdx = (now.getFullYear() - START.y) * 12 + (now.getMonth() + 1 - START.m); // months since origin
+    var total = Math.max(160, nowIdx + 1);
+
+    var trace = document.getElementById("trace");
+    trace.style.setProperty("--total", total);
+    trace.querySelectorAll("[data-now]").forEach(function (bar) {
+      bar.style.setProperty("--e", nowIdx + 1);
+    });
+
+    function plural(n, one, few, many) {
+      var a = n % 10, b = n % 100;
+      if (a === 1 && b !== 11) return one;
+      if (a >= 2 && a <= 4 && (b < 12 || b > 14)) return few;
+      return many;
+    }
+    trace.querySelectorAll("[data-from]").forEach(function (el) {
+      var p = el.getAttribute("data-from").split("-");
+      var months = (now.getFullYear() - +p[0]) * 12 + (now.getMonth() + 1 - +p[1]) + 1; // inclusive, как на Хабр Карьере
+      var y = Math.floor(months / 12), m = months % 12;
+      var out = [];
+      if (y) out.push(y + " " + plural(y, "год", "года", "лет"));
+      if (m) out.push(m + " мес.");
+      el.textContent = out.join(" ");
+    });
+  })();
+</script>
+</body>
+</html>

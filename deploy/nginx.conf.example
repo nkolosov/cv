@@ -1,0 +1,33 @@
+# Пример конфига nginx для лендинга.
+# Замените server_name и root на свои значения; root должен совпадать с DEPLOY_PATH.
+# HTTPS-часть (ssl_certificate и т. п.) обычно добавляет certbot: sudo certbot --nginx -d cv.example.com
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name cv.example.com;
+
+    root /var/www/cv;
+    index index.html;
+
+    charset utf-8;
+
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header X-Frame-Options "DENY" always;
+
+    gzip on;
+    gzip_types text/html text/css application/javascript image/svg+xml;
+
+    location = /index.html {
+        # HTML не кешируем надолго, чтобы правки были видны сразу после деплоя.
+        add_header Cache-Control "no-cache" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+        add_header X-Frame-Options "DENY" always;
+    }
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}

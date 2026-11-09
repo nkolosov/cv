@@ -1,0 +1,112 @@
+name: Deploy
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "site/**"
+      - ".htmlvalidate.json"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch:
+
+# Не запускаем два деплоя одновременно; новый ждёт завершения текущего.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Validate HTML
+        run: npx --yes html-validate@9 site/
+
+  deploy:
+    needs: validate
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ vars.SITE_URL }}
+    env:
+      DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+      DEPLOY_USER: ${{ vars.DEPLOY_USER }}
+      DEPLOY_PORT: ${{ vars.DEPLOY_PORT || '22' }}
+      DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check configuration
+        env:
+          HAS_KEY: ${{ secrets.DEPLOY_SSH_KEY != '' }}
+          HAS_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS != '' }}
+        run: |
+          missing=()
+          [ -n "$DEPLOY_HOST" ] || missing+=("variable DEPLOY_HOST")
+          [ -n "$DEPLOY_USER" ] || missing+=("variable DEPLOY_USER")
+          [ -n "$DEPLOY_PATH" ] || missing+=("variable DEPLOY_PATH")
+          [ "$HAS_KEY" = "true" ] || missing+=("secret DEPLOY_SSH_KEY")
+          [ "$HAS_KNOWN_HOSTS" = "true" ] || missing+=("secret DEPLOY_KNOWN_HOSTS")
+          if [ ${#missing[@]} -gt 0 ]; then
+            for m in "${missing[@]}"; do echo "::error::Не задан $m (Settings → Secrets and variables → Actions)"; done
+            exit 1
+          fi
+          case "$DEPLOY_PATH" in
+            /*) ;;
+            *) echo "::error::DEPLOY_PATH должен быть абсолютным путём"; exit 1 ;;
+          esac
+
+      - name: Configure SSH
+        env:
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+          cat > ~/.ssh/config <<EOF
+          Host deploy-target
+            HostName $DEPLOY_HOST
+            User $DEPLOY_USER
+            Port $DEPLOY_PORT
+            IdentityFile ~/.ssh/deploy_key
+            IdentitiesOnly yes
+            StrictHostKeyChecking yes
+            BatchMode yes
+          EOF
+
+      - name: Upload site
+        run: |
+          # --delay-updates: новые файлы подменяются в самом конце, сайт не бывает «наполовину обновлён».
+          # --delete-after: лишние файлы удаляются после загрузки.
+          rsync --archive --compress --checksum --human-readable --itemize-changes \
+            --delay-updates --delete-after \
+            --chmod=D755,F644 \
+            site/ "deploy-target:${DEPLOY_PATH%/}/"
+
+      - name: Smoke test
+        if: vars.SITE_URL != ''
+        run: |
+          for i in 1 2 3; do
+            if curl --fail --silent --show-error --location --max-time 10 "${{ vars.SITE_URL }}" | grep -q "Никита Колосов"; then
+              echo "Сайт отвечает: ${{ vars.SITE_URL }}"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "::error::Сайт ${{ vars.SITE_URL }} не отдаёт новую страницу"
+          exit 1
+
+      - name: Clean up SSH key
+        if: always()
+        run: rm -f ~/.ssh/deploy_key
